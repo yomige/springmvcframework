@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration>
+    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <param name="Append" value="true"/>
+        <param name="DatePattern" value=".yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p %c{1}:%L %m %n" />
+            <!--
+            ConversionPattern format specification
+            %d      inserts the date; you can specify the format (%d{yyyy-MM-dd HH:mm:ss,SSS})
+            %-5p    inserts the priority log level, 5 characters, left justified
+            %c{1}   inserts the name of the class
+            %L      inserts the line number
+            %m      inserts the user message
+            %n      inserts the separator (for example, a new line)
+            -->
+        </layout>
+    </appender>
+
+    <appender name="fileDaily" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${webapp.root}/WEB-INF/logs/frame-date.log"/>
+        <param name="Append" value="true"/>
+        <param name="MaxFileSize" value="4096KB" />
+        <param name="MaxBackupIndex" value="10" />
+        <param name="DatePattern" value=".yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %c - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+        <param name="Threshold" value="INFO" />
+        <param name="MaxFileSize" value="4096KB" />
+        <param name="MaxBackupIndex" value="10" />
+        <param name="File" value="${webapp.root}/WEB-INF/logs/frame.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p %c{1}:%L %m %n" />
+        </layout>
+    </appender>
+
+    <!--sets the priority log level for org.springframework-->
+    <logger name="org.springframework">
+        <level value="info"/>
+    </logger>
+
+    <!--sets the priority log level for it.helloworld.controller-->
+    <logger name= "com.demo">
+        <level value="debug"/>
+    </logger>
+
+    <!--sets the default priority log level-->
+    <root>
+        <priority value="debug"></priority>
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="fileDaily"/>
+        <appender-ref ref="fileAppender"/>
+    </root>
+</log4j:configuration>

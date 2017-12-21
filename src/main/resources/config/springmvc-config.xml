@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Section for Traditional Spring MVC. -->
+    <!-- Annotation driven controllers -->
+    <mvc:annotation-driven validator="validator">
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
+            <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"/>
+            <!-- Avoid downloading file when IE execute ajax request and response json data-->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- a list of packages to scan. Can be extended by adding (or removing) packages. -->
+    <context:component-scan base-package="com.demo"></context:component-scan>
+
+    <mvc:resources mapping="/ui/**" location="/ui/**"></mvc:resources>
+
+    <!-- Tell Spring MVC how to find its jsp files -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+    <!--
+    I18n using MessageSource
+    As an alternative to ResourceBundleMessageSource, Spring provides a ReloadableResourceBundleMessageSource class.
+    This variant supports the same bundle file format but is more flexible than the standard JDK based ResourceBundleMessageSource implementation.
+    In particular, it allows for reading files from any Spring resource location (not just from the classpath) and supports hot reloading of bundle property files (while efficiently caching them in between)
+    -->
+
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+        <!-- If no validationMessageSource was referred, it will search ValidationMessages.properties in classpath-->
+        <property name="validationMessageSource" ref="messageSource" />
+    </bean>
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames" >
+            <list>
+                <value>I18n.business</value>
+                <value>I18n.exception</value>
+                <value>I18n.validationMessages</value>
+            </list>
+        </property>
+        <property name="defaultEncoding" value="UTF-8"></property>
+    </bean>
+
+
+    <bean id="commonsMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding">
+            <value>UTF-8</value>
+        </property>
+        <property name="maxUploadSize">
+            <value>32505856</value>
+        </property>
+        <property name="maxInMemorySize">
+            <value>4096</value>
+        </property>
+    </bean>
+
+</beans>
